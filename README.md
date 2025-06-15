@@ -32,13 +32,20 @@ git clone https://github.com/carvalhaus/chat_learn.git
 cd chat_learn
 ```
 
-### 2️⃣ Run with Docker Compose
+### 2️⃣ Access Frontend directory and install dependencies
 
 ```bash
-docker-compose up --build
+cd frontend
+npm install
 ```
 
-### 3️⃣ Access the Applications
+### 3️⃣ Run with Docker Compose
+
+```bash
+docker compose up -d --build
+```
+
+### 4️⃣ Access the Applications
 
 -   **Frontend:** [http://localhost](http://localhost)
 -   **Backend API:** [http://localhost/api](http://localhost/api)
