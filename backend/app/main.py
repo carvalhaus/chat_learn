@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from .api.user_router import router as user_router
+from .auth import auth_router
 from .database.init_db import init_db
 from .core.exception_handler import register_exception_handlers
 
@@ -17,3 +18,4 @@ def startup_event():
     init_db()
 
 app.include_router(user_router)
+app.include_router(auth_router.router)
