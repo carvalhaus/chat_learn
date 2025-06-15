@@ -27,3 +27,11 @@ class UserUpdate(BaseModel):
 
     class Config:
         from_attributes = True 
+
+class UserEmail(BaseModel):
+    id: int
+    email: EmailStr
+    hashed_password: str
+
+    class Config:
+        from_attributes = True 
