@@ -32,3 +32,10 @@ class UserRepository:
         db.commit()
         db.refresh(user)
         return user
+    
+    def get_by_email(self, db: Session, email: str) -> User:
+        try:
+            return db.query(User).filter(User.email == email).first()
+        except SQLAlchemyError as e:
+            db.rollback()
+        raise e 

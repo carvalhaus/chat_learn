@@ -1,5 +1,5 @@
 from typing import List, Optional
-from app.schemas.user_schema import UserCreate, UserRead, UserUpdate
+from app.schemas.user_schema import UserCreate, UserRead, UserUpdate, UserEmail
 from app.repositories.user_repository import UserRepository
 from app.database.session import SessionLocal
 from sqlalchemy.orm import Session
@@ -59,3 +59,12 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found!")
 
         return UserRead.model_validate(updated_user)
+    
+    def get_by_email(self, email: str) -> UserEmail:
+        user = self.repository.get_by_email(self.db, email)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Incorrect email or password"
+            )
+        return UserEmail.from_orm(user)
