@@ -30,19 +30,19 @@ class UserService:
             self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email ou CPF já cadastrado."
+                detail="Email or CPF already registered."
             )
         except Exception as e:
             self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Erro inesperado: {str(e)}"
+                detail=f"Unexpected error: {str(e)}"
             )
 
     def get_user(self, user_id: int) -> Optional[UserRead]:
         user = self.repository.get_by_id(self.db, user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+            raise HTTPException(status_code=404, detail="User not found!")
         return UserRead.from_orm(user)
 
     def list_users(self) -> List[UserRead]:
@@ -56,6 +56,6 @@ class UserService:
         updated_user = self.repository.update(self.db, user_id, update_data)
 
         if not updated_user:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+            raise HTTPException(status_code=404, detail="User not found!")
 
         return UserRead.model_validate(updated_user)

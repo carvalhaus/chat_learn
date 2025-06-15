@@ -7,7 +7,7 @@ from ..schemas.user_schema import UserCreate
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
-    print("✅ Tabelas criadas com sucesso.")
+    print("✅ Tables created successfully.")
 
 def seed_users():
     db = SessionLocal()
@@ -15,7 +15,7 @@ def seed_users():
     db_users = user_service.list_users()
     
     if db_users:
-        print("Usuários já existem. Seed ignorado.")
+        print("⚠️ Users already exist. Seed ignored.")
         return
 
     users = [
@@ -43,7 +43,7 @@ def seed_users():
         user_create = UserCreate(**u)
         user_service.create_user(user_create)
 
-    print("Seed de usuários realizado com sucesso!")
+    print("✅ User seeding successfully completed!")
 
 def init_db():
     create_tables()
