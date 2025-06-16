@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from ..database.base import Base
 from datetime import datetime, timezone
+from ..core.constants.perfil import PerfilEnum
 
 class User(Base):
     __tablename__ = "users"
@@ -13,6 +14,8 @@ class User(Base):
     gender = Column(String(20), nullable=False)
     phone = Column(String(20), nullable=False)
     birth_date = Column(Date, nullable=False)
+
+    perfil = Column(Integer, nullable=False, default=PerfilEnum.USER)
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

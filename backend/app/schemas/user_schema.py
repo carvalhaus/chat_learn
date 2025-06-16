@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, constr
 from datetime import date
 from typing import Optional
+from ..core.constants.perfil import PerfilEnum
 
 class UserBase(BaseModel):
     name: str
@@ -9,6 +10,7 @@ class UserBase(BaseModel):
     gender: str
     phone: str
     birth_date: date
+    perfil: PerfilEnum = PerfilEnum.USER
 
 class UserCreate(UserBase):
     password: str
@@ -24,6 +26,7 @@ class UserUpdate(BaseModel):
     gender: Optional[str] = None
     phone: Optional[str] = None
     birth_date: Optional[date] = None
+    perfil: Optional[PerfilEnum] = None
 
     class Config:
         from_attributes = True 
@@ -32,6 +35,7 @@ class UserEmail(BaseModel):
     id: int
     email: EmailStr
     hashed_password: str
+    perfil: PerfilEnum
 
     class Config:
         from_attributes = True 
