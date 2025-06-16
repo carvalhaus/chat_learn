@@ -17,3 +17,6 @@ class UserController:
     
     def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[UserRead]:
         return self.service.update_user(user_id, user_update)
+    
+    def delete_user(self, user_id: int) -> bool:
+        return self.service.delete_user(user_id)

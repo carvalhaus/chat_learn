@@ -38,4 +38,17 @@ class UserRepository:
             return db.query(User).filter(User.email == email).first()
         except SQLAlchemyError as e:
             db.rollback()
-        raise e 
+        raise e
+    
+    def delete(self, db: Session, user_id: int) -> bool:
+        try:
+            user = self.get_by_id(db, user_id)
+            if not user:
+                return False
+
+            db.delete(user)
+            db.commit()
+            return True
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise e
