@@ -24,9 +24,14 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password"
         )
+    
+    token_data = {
+        "sub": str(db_user.id),
+        "perfil": db_user.perfil
+    }
 
     access_token = create_access_token(
-        data={"sub": str(db_user.id)},
+        token_data,
         expires_delta=timedelta(minutes=60 * 24)
     )
 
