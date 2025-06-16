@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from app.schemas.user_schema import UserRead, UserCreate, UserUpdate
 from app.controllers.user_controller import UserController
+from app.schemas.message_schema import MessageResponse
+from app.middleware.permissions import admin_only
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["Users"], dependencies=[Depends(admin_only)])
 user_controller = UserController()
 
 @router.post("/", response_model=UserRead)
@@ -23,3 +25,12 @@ def list_users():
 def update_user(user_id: int, user_update: UserUpdate):
     user = user_controller.update_user(user_id, user_update)
     return user
+
+@router.delete("/{user_id}", response_model=MessageResponse)
+def delete_user(user_id: int):
+    if not user_controller.delete_user(user_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found!"
+        )
+    return {"message": "User deleted successfully! "}
