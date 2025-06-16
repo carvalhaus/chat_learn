@@ -26,7 +26,8 @@ def seed_users():
             "password": "admin123",
             "gender": "M",
             "phone": "51999999999",
-            "birth_date": "1990-01-01"
+            "birth_date": "1990-01-01",
+            "perfil": 1
         },
         {
             "name": "Usuário Teste",
@@ -35,7 +36,8 @@ def seed_users():
             "password": "user123",
             "gender": "F",
             "phone": "51988888888",
-            "birth_date": "1992-05-15"
+            "birth_date": "1992-05-15",
+            "perfil": 2
         },
     ]
 
