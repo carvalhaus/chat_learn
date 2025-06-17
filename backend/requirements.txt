@@ -18,3 +18,5 @@ python-multipart==0.0.9
 
 pytest==8.2.1
 pytest-asyncio==0.23.6
+
+rapidfuzz==3.6.2
