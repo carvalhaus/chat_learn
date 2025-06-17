@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, DateTime
+from sqlalchemy.orm import relationship
 from ..database.base import Base
 from datetime import datetime, timezone
 from ..core.constants.perfil import PerfilEnum
@@ -20,3 +21,5 @@ class User(Base):
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    chat_messages = relationship("ChatMessage", back_populates="user") 
