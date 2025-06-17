@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response
 from .routers.user_router import router as user_router
 from .routers.chat_question_router import router as chat_question_router
 from .routers.chat_answer_router import router as chat_answer_router
+from .routers.chat_router import router as chat_router
 from .auth import auth_router
 from .database.init_db import init_db
 from .core.exception_handler import register_exception_handlers
@@ -22,6 +23,7 @@ def startup_event():
 app.include_router(user_router)
 app.include_router(chat_question_router)
 app.include_router(chat_answer_router)
+app.include_router(chat_router)
 app.include_router(auth_router.router)
 
 @app.get("/", tags=["Home"])
