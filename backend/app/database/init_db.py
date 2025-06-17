@@ -1,13 +1,21 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import inspect
 from .session import engine, SessionLocal
 from .base import Base
-from ..models.user_model import User
 from ..services.user_service import UserService
 from ..schemas.user_schema import UserCreate
 
 def create_tables():
+    inspector = inspect(engine)
+    existing_tables = inspector.get_table_names()
+
     Base.metadata.create_all(bind=engine)
-    print("✅ Tables created successfully.")
+
+    for table in Base.metadata.tables.keys():
+        if table in existing_tables:
+            print(f"⚠️ Table '{table}' already exist.")
+        else:
+            print(f"✅ Table '{table}' created successfully")
 
 def seed_users():
     db = SessionLocal()
@@ -24,7 +32,7 @@ def seed_users():
             "email": "admin@example.com",
             "cpf": "12345678901",
             "password": "admin123",
-            "gender": "M",
+            "gender": 1,
             "phone": "51999999999",
             "birth_date": "1990-01-01",
             "perfil": 1
@@ -34,7 +42,7 @@ def seed_users():
             "email": "user@example.com",
             "cpf": "98765432100",
             "password": "user123",
-            "gender": "F",
+            "gender": 2,
             "phone": "51988888888",
             "birth_date": "1992-05-15",
             "perfil": 2
