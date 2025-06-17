@@ -19,4 +19,7 @@ class ChatMessageRead(ChatMessageBase):
     created_at: datetime
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+class ChatProcessResponse(BaseModel):
+    bot_message: ChatMessageRead
