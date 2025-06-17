@@ -1,5 +1,5 @@
 from typing import List, Optional
-from app.schemas.chat_question_schema import ChatQuestionCreate, ChatQuestionRead, ChatQuestionUpdate
+from app.schemas.chat_question_schema import ChatQuestionCreate, ChatQuestionRead, ChatQuestionUpdate, QuestionWithAnswerCreate
 from app.services.chat_question_service import ChatQuestionService
 
 class ChatQuestionController:
@@ -20,3 +20,6 @@ class ChatQuestionController:
 
     def delete_question(self, question_id: int) -> bool:
         return self.service.delete_question(question_id)
+
+    def create_question_with_answer(self, data: QuestionWithAnswerCreate):
+        return self.service.create_question_with_answer(data)

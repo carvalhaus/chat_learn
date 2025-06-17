@@ -20,4 +20,7 @@ class ChatQuestionRead(ChatQuestionBase):
     answers: List[ChatAnswerRead] = []
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+class QuestionWithAnswerCreate(ChatQuestionBase):
+    answer: str

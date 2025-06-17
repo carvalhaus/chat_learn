@@ -2,13 +2,16 @@ from typing import List, Optional
 from app.database.session import SessionLocal
 from sqlalchemy.orm import Session
 from app.repositories.chat_question_repository import ChatQuestionRepository
-from app.schemas.chat_question_schema import ChatQuestionCreate, ChatQuestionUpdate, ChatQuestionRead
+from app.repositories.chat_answer_repository import ChatAnswerRepository
+from app.schemas.chat_question_schema import ChatQuestionCreate, ChatQuestionUpdate, ChatQuestionRead, QuestionWithAnswerCreate
+from app.schemas.chat_answer_schema import ChatAnswerRead
 from app.models.chat_question_model import ChatQuestion
 from fastapi import HTTPException, status
 
 class ChatQuestionService:
     def __init__(self):
         self.repository = ChatQuestionRepository()
+        self.answer_repository = ChatAnswerRepository()
         self.db: Session = SessionLocal()
 
     def create_question(self, question_create: ChatQuestionCreate) -> ChatQuestion:
@@ -45,3 +48,15 @@ class ChatQuestionService:
         if not deleted:
             raise HTTPException(status_code=404, detail="Question not found")
         return True
+
+    def create_question_with_answer(self, data: QuestionWithAnswerCreate):
+        try:
+            question = self.repository.create(self.db, {"question": data.question, "subject": data.question})
+            answer = self.answer_repository.create(self.db, {"question_id": question.id, "answer": data.answer})
+            return {
+                "question": ChatQuestionRead.from_orm(question),
+                "answer": ChatAnswerRead.from_orm(answer)
+            }
+        except Exception as e:
+            self.db.rollback()
+            raise HTTPException(status_code=400, detail=f"Failed to create question with answer: {str(e)}")

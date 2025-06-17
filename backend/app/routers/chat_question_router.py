@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import List
-from app.schemas.chat_question_schema import ChatQuestionRead, ChatQuestionCreate, ChatQuestionUpdate
+from app.schemas.chat_question_schema import ChatQuestionRead, ChatQuestionCreate, ChatQuestionUpdate, QuestionWithAnswerCreate
 from app.controllers.chat_question_controller import ChatQuestionController
 from app.schemas.message_schema import MessageResponse
 from app.middleware.permissions import user_only
@@ -11,6 +11,10 @@ question_controller = ChatQuestionController()
 @router.post("/", response_model=ChatQuestionRead)
 def create_question(question_create: ChatQuestionCreate):
     return question_controller.create_question(question_create)
+
+@router.post("/with-answer")
+def create_question_with_answer(data: QuestionWithAnswerCreate):
+    return question_controller.create_question_with_answer(data)
 
 @router.get("/{question_id}", response_model=ChatQuestionRead)
 def get_question(question_id: int):
