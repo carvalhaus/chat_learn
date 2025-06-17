@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from .chat_message_schema import ChatMessageRead
 
 class ChatSessionBase(BaseModel):
-    user_id: int
+    user_id: Optional[int] = None
 
 class ChatSessionCreate(ChatSessionBase):
     pass
@@ -12,7 +12,7 @@ class ChatSessionCreate(ChatSessionBase):
 class ChatSessionRead(ChatSessionBase):
     id: int
     created_at: datetime
-    messages: Optional[List["ChatMessageRead"]] = []
+    messages: List["ChatMessageRead"] = []
 
     class Config:
         from_attributes = True 
