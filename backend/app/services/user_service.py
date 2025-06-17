@@ -70,18 +70,7 @@ class UserService:
         return UserEmail.from_orm(user)
     
     def delete_user(self, user_id: int) -> bool:
-        user = self.repository.get_by_id(self.db, user_id)
-
-        if not user:
-            return False
-
-        try:
-            self.db.delete(user)
-            self.db.commit()
-            return True
-        except Exception as e:
-            self.db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error deleting user: {str(e)}"
-            )
+        deleted = self.repository.delete(self.db, user_id)
+        if not deleted:
+            raise HTTPException(status_code=404, detail="User not found")
+        return True

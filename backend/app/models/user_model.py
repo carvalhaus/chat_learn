@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Date, DateTime
 from ..database.base import Base
 from datetime import datetime, timezone
 from ..core.constants.perfil import PerfilEnum
+from ..core.constants.gender import GenderEnum
 
 class User(Base):
     __tablename__ = "users"
@@ -11,7 +12,7 @@ class User(Base):
     email = Column(String(150), unique=True, nullable=False, index=True)
     cpf = Column(String(14), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
-    gender = Column(String(20), nullable=False)
+    gender = Column(Integer, nullable=False, default=GenderEnum.MALE)
     phone = Column(String(20), nullable=False)
     birth_date = Column(Date, nullable=False)
 

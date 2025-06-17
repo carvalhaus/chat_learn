@@ -28,9 +28,5 @@ def update_user(user_id: int, user_update: UserUpdate):
 
 @router.delete("/{user_id}", response_model=MessageResponse)
 def delete_user(user_id: int):
-    if not user_controller.delete_user(user_id):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found!"
-        )
-    return {"message": "User deleted successfully! "}
+    user_controller.delete_user(user_id)
+    return {"message": "User deleted successfully!"}
