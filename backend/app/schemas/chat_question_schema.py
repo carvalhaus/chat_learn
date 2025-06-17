@@ -17,7 +17,7 @@ class ChatQuestionRead(ChatQuestionBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    # answers: List[ChatAnswerRead] = []
+    answers: List[ChatAnswerRead] = []
 
     class Config:
         from_attributes = True 
