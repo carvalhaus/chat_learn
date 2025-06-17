@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends
 from typing import List
 from app.schemas.chat_question_schema import ChatQuestionRead, ChatQuestionCreate, ChatQuestionUpdate
 from app.controllers.chat_question_controller import ChatQuestionController
