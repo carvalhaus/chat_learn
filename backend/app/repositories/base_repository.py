@@ -15,29 +15,48 @@ class BaseRepository:
             raise
 
     def list_all(self, db: Session):
-        return db.query(self.model).all()
+        try:
+            return db.query(self.model).all()
+        except SQLAlchemyError:
+            db.rollback()
+            raise
 
     def create(self, db: Session, obj_data: dict):
-        obj = self.model(**obj_data)
-        db.add(obj)
-        db.commit()
-        db.refresh(obj)
-        return obj
+        try:
+            obj = self.model(**obj_data)
+            db.add(obj)
+            db.commit()
+            db.refresh(obj)
+            db.expire_all()
+            return obj
+        except SQLAlchemyError:
+            db.rollback()
+            raise
 
     def update(self, db: Session, id: int, update_data: dict):
-        obj = self.get_by_id(db, id)
-        if not obj:
-            return None
-        for key, value in update_data.items():
-            setattr(obj, key, value)
-        db.commit()
-        db.refresh(obj)
-        return obj
+        try:
+            obj = self.get_by_id(db, id)
+            if not obj:
+                return None
+            for key, value in update_data.items():
+                setattr(obj, key, value)
+            db.commit()
+            db.refresh(obj)
+            db.expire_all()
+            return obj
+        except SQLAlchemyError:
+            db.rollback()
+            raise
 
     def delete(self, db: Session, id: int) -> bool:
-        obj = self.get_by_id(db, id)
-        if not obj:
-            return False
-        db.delete(obj)
-        db.commit()
-        return True
+        try:
+            obj = self.get_by_id(db, id)
+            if not obj:
+                return False
+            db.delete(obj)
+            db.commit()
+            db.expire_all()
+            return True
+        except SQLAlchemyError:
+            db.rollback()
+            raise
