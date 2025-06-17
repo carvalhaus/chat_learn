@@ -10,7 +10,12 @@ class ChatQuestion(Base):
     question = Column(Text, nullable=False)
     subject = Column(String(100), nullable=True)
 
-    answers = relationship("ChatAnswer", back_populates="question")
+    answers = relationship(
+        "ChatAnswer",
+        back_populates="question",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
