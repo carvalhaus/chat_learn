@@ -55,14 +55,15 @@ class ChatMessageService:
             )
         return True
     
-    def process_message(self, session_id: int, message_text: str):
+    def process_message(self, session_id: int, message: ChatMessageCreate):
         user_message = self.repository.create(self.db, {
             "session_id": session_id,
             "sender": SenderEnum(1),
-            "message": message_text.message
+            "message": message.message,
+            "user_id": message.user_id
         })
 
-        question = self.chat_question_repository.find_best_match(self.db, message_text)
+        question = self.chat_question_repository.find_best_match(self.db, message.message)
 
         if not question or not question.answers:
             bot_response = "Sorry, I don't have an answer for that."

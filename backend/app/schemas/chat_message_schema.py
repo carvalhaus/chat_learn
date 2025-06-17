@@ -4,9 +4,9 @@ from pydantic import BaseModel
 from app.core.constants.sender import SenderEnum
 
 class ChatMessageBase(BaseModel):
-    session_id: int
     sender: SenderEnum
     message: str
+    user_id: Optional[int] = None 
 
 class ChatMessageCreate(ChatMessageBase):
     pass
@@ -16,6 +16,7 @@ class ChatMessageUpdate(BaseModel):
 
 class ChatMessageRead(ChatMessageBase):
     id: int
+    session_id: int
     created_at: datetime
 
     class Config:
