@@ -12,9 +12,9 @@ class ChatMessage(Base):
 
     sender = Column(SqlEnum(SenderEnum), nullable=False)
     message = Column(Text, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    external_user_id = Column(Integer, ForeignKey("external_users.id", ondelete="CASCADE"), nullable=False)
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     session = relationship("ChatSession", back_populates="messages")
-    user = relationship("User", back_populates="chat_messages")
+    external_user = relationship("ExternalUser", back_populates="chat_messages")

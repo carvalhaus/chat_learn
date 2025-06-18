@@ -7,9 +7,13 @@ class ChatSession(Base):
     __tablename__ = "chat_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    external_user_id = Column(
+        Integer, 
+        ForeignKey("external_users.id", ondelete="CASCADE"), 
+        nullable=False
+    )
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-    user = relationship("User")
+    external_user = relationship("ExternalUser", back_populates="chat_sessions")
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan", passive_deletes=True)
