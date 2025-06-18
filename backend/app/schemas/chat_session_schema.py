@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List
 from datetime import datetime
 from pydantic import BaseModel
 from .chat_message_schema import ChatMessageRead
 
 class ChatSessionBase(BaseModel):
-    user_id: Optional[int] = None
+    external_user_id: int
 
 class ChatSessionCreate(ChatSessionBase):
     pass

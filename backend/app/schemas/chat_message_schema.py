@@ -6,7 +6,7 @@ from app.core.constants.sender import SenderEnum
 class ChatMessageBase(BaseModel):
     sender: SenderEnum
     message: str
-    user_id: Optional[int] = None 
+    external_user_id: int 
 
 class ChatMessageCreate(ChatMessageBase):
     pass
