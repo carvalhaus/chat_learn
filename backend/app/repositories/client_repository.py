@@ -8,11 +8,8 @@ class ClientRepository(BaseRepository):
     def __init__(self):
         super().__init__(Client)
 
-    def get_by_name_or_slug(self, db: Session, name: Optional[str], slug: Optional[str]):
-        try:
-            return db.query(self.model).filter(
-                (self.model.name == name) | (self.model.slug == slug)
-            ).first()
-        except SQLAlchemyError:
-            db.rollback()
-            raise
+    def get_by_slug(self, db, slug: str):
+        return db.query(self.model).filter(self.model.slug == slug).first()
+
+    def get_by_name(self, db, name: str):
+        return db.query(self.model).filter(self.model.name == name).first()
