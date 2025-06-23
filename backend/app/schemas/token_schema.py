@@ -7,3 +7,6 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: int
     perfil: int
+
+class TokenClientData(BaseModel):
+    client_id: int
