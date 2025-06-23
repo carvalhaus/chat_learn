@@ -3,7 +3,7 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
-from app.schemas.token_schema import TokenData
+from app.schemas.token_schema import TokenData, TokenClientData
 from app.services.user_service import UserService
 
 SECRET_KEY = "YOUR_SECRET_KEY"
@@ -60,3 +60,44 @@ def verify_token(token: str):
         raise credentials_exception
 
     return user
+
+def create_client_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(days=365)
+
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    return encoded_jwt
+
+def verify_client_token(token: str):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        client_id: str = payload.get("sub")
+
+        if client_id is None:
+            raise credentials_exception
+
+        token_data = TokenClientData(client_id=int(client_id))
+
+    except JWTError:
+        raise credentials_exception
+
+    user = UserService().get_user(token_data.user_id)
+
+    if user is None:
+        raise credentials_exception
+
+    return user
+
