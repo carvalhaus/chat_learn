@@ -8,7 +8,7 @@ class ClientBase(BaseModel):
     is_active: Optional[bool] = True
 
 class ClientCreate(ClientBase):
-    api_key: str
+    pass
 
 
 class ClientUpdate(BaseModel):
@@ -19,7 +19,7 @@ class ClientUpdate(BaseModel):
 
 class ClientRead(ClientBase):
     id: int
-    api_key: str
+    api_key: Optional[str]
     created_at: datetime
     updated_at: datetime
 
