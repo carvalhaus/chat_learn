@@ -6,5 +6,5 @@ class ChatSessionRepository(BaseRepository):
     def __init__(self):
         super().__init__(ChatSession)
 
-    def get_by_user_id(self, db: Session, user_id: int):
-        return db.query(ChatSession).filter(ChatSession.user_id == user_id).all()
+    def get_by_external_user_id(self, db: Session, external_user_id: int):
+        return db.query(ChatSession).filter(ChatSession.external_user_id == external_user_id).all()
