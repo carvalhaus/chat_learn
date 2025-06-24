@@ -7,6 +7,7 @@ from .routers.client_router import router as client_router
 from .auth import auth_router
 from .database.init_db import init_db
 from .core.exception_handler import register_exception_handlers
+from app.core.ollama_client import check_ollama_connection
 
 app = FastAPI(
     title="Chatbot API",
@@ -20,6 +21,7 @@ register_exception_handlers(app)
 @app.on_event("startup")
 def startup_event():
     init_db()
+    check_ollama_connection()
 
 app.include_router(user_router)
 app.include_router(chat_question_router)
