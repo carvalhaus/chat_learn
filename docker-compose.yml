@@ -79,11 +79,10 @@ services:
       - ollama_data:/root/.ollama
     entrypoint: [ "/usr/bin/bash", "pull-ollama.sh" ]
     healthcheck:
-    ##PRECISA AJUSTAR
-      test: ["CMD", "curl", "-s", "http://localhost:11434/api/tags | grep llama3.2"]
+      test: ["CMD-SHELL", "curl -s http://localhost:11434/api/tags | grep llama3.2"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 20
 
 volumes:
   db_data:
