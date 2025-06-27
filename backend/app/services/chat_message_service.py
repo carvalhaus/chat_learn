@@ -90,17 +90,17 @@ class ChatMessageService:
             questions_index = self.vector_store.get_vectorstore("chatbot_questions_index")
             question_results = questions_index.similarity_search(user_message, k=2)
 
-            # history_index = self.vector_store.get_vectorstore("chatbot_external_user_history_index")
-            # where_clause = {"external_user_id": str(external_user_id)} if external_user_id else None
-            # history_results = history_index.similarity_search(user_message, k=2, where=where_clause)
+            history_index = self.vector_store.get_vectorstore("chatbot_external_user_history_index")
+            where_clause = {"external_user_id": str(external_user_id)} if external_user_id else None
+            history_results = history_index.similarity_search(user_message, k=2, where=where_clause)
 
-            # all_results = question_results + history_results
+            all_results = question_results + history_results
 
-            if not question_results:
+            if not all_results:
                 print("⚠️ Nenhum resultado encontrado em nenhum dos índices.")
                 return "Desculpe, não encontrei uma resposta para isso."
 
-            context = "\n\n".join([doc.page_content for doc in question_results])
+            context = "\n\n".join([doc.page_content for doc in all_results])
 
             template = """Você é um assistente que responde com base nas informações abaixo.
             Contexto:
@@ -129,7 +129,7 @@ class ChatMessageService:
         
     def update_message_feedback(self, message_id: int, feedback: FeedbackEnum):
         try:
-            updated = self.repository.update_feedback(self.db, message_id, feedback)
+            updated = self.repository.update_feedback(self.db, message_id, feedback.feedback)
             if not updated:
                 raise HTTPException(status_code=404, detail="Mensagem não encontrada")
             return ChatMessageRead.from_orm(updated)
