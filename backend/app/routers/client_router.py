@@ -1,10 +1,11 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from typing import List
 from app.schemas.client_schema import ClientCreate, ClientRead, ClientUpdate
 from app.controllers.client_controller import ClientController
 from app.schemas.message_schema import MessageResponse
+from app.middleware.permissions import admin_only
 
-router = APIRouter(prefix="/clients", tags=["Clients"])
+router = APIRouter(prefix="/clients", tags=["Clients"], dependencies=[Depends(admin_only)])
 controller = ClientController()
 
 

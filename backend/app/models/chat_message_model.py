@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from app.database.base import Base
 from app.core.constants.sender import SenderEnum
 from datetime import datetime, timezone
+from app.core.constants.feedback import FeedbackEnum
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
@@ -13,6 +14,7 @@ class ChatMessage(Base):
     sender = Column(SqlEnum(SenderEnum), nullable=False)
     message = Column(Text, nullable=False)
     external_user_id = Column(Integer, ForeignKey("external_users.id", ondelete="CASCADE"), nullable=False)
+    feedback = Column(SqlEnum(FeedbackEnum), default=FeedbackEnum.NEUTRAL)
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 

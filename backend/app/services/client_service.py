@@ -1,7 +1,6 @@
 from app.schemas.client_schema import ClientCreate, ClientRead, ClientUpdate
 from app.repositories.client_repository import ClientRepository
 from app.database.session import SessionLocal
-from app.auth.auth_handler import create_client_access_token
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
@@ -14,6 +13,7 @@ class ClientService:
         self.db: Session = SessionLocal()
 
     def generate_api_key(self, client_id: int, client_is_active: bool) -> str:
+        from app.auth.auth_client_handler import create_client_access_token
         token = create_client_access_token(
             data={"sub": str(client_id),"is_active": client_is_active}
         )

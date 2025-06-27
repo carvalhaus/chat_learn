@@ -11,6 +11,7 @@ from app.core.constants.sender import SenderEnum
 from app.core.ollama_client import get_ollama_llm
 from app.database.vectorstore import ChatVectorStore
 from langchain_core.prompts import ChatPromptTemplate
+from app.core.constants.feedback import FeedbackEnum
 
 class ChatMessageService:
     def __init__(self):
@@ -60,7 +61,6 @@ class ChatMessageService:
         return True
     
     def process_message(self, session_id: int, message: ChatMessageCreate):
-        # 1. Salva a mensagem do usuário
         user_message = self.repository.create(self.db, {
             "session_id": session_id,
             "sender": SenderEnum(1),  # Usuário
@@ -68,10 +68,10 @@ class ChatMessageService:
             "external_user_id": message.external_user_id
         })
 
-        # 2. Gera a resposta usando RAG com Ollama
-        bot_response = self.generate_answer_with_rag(user_message.message)
+        self.vector_store.build_vectorstore_from_external_user_history(self.db, message.external_user_id)
 
-        # 3. Salva a resposta do bot
+        bot_response = self.generate_answer_with_rag(user_message.message, external_user_id=message.external_user_id)
+
         bot_message = self.repository.create(self.db, {
             "session_id": session_id,
             "sender": SenderEnum(2),  # Bot
@@ -79,39 +79,59 @@ class ChatMessageService:
             "external_user_id": message.external_user_id
         })
 
-        # 4. Retorna a resposta do bot
         return {
             "bot_message": ChatMessageRead.from_orm(bot_message),
         }
 
-    def generate_answer_with_rag(self, user_message: str):
-        # 1. Busca os documentos mais relevantes no vector store
-        results = self.vector_store.vector_store.similarity_search(user_message, k=3)
+    def generate_answer_with_rag(self, user_message: str, external_user_id: int = None) -> str:
+        try:
+            print(f"🔍 Gerando resposta via RAG...")
 
-        if not results:
-            return "Desculpe, não encontrei uma resposta para isso."
+            questions_index = self.vector_store.get_vectorstore("chatbot_questions_index")
+            question_results = questions_index.similarity_search(user_message, k=2)
 
-        # 2. Monta o contexto a partir dos documentos encontrados
-        context = "\n\n".join([doc.page_content for doc in results])
+            # history_index = self.vector_store.get_vectorstore("chatbot_external_user_history_index")
+            # where_clause = {"external_user_id": str(external_user_id)} if external_user_id else None
+            # history_results = history_index.similarity_search(user_message, k=2, where=where_clause)
 
-        template = """Você é um assistente que responde com base nas informações abaixo.
-        Contexto:
-        {context}
+            # all_results = question_results + history_results
 
-        Pergunta:
-        {question}
+            if not question_results:
+                print("⚠️ Nenhum resultado encontrado em nenhum dos índices.")
+                return "Desculpe, não encontrei uma resposta para isso."
 
-        Resposta:
-        """
+            context = "\n\n".join([doc.page_content for doc in question_results])
 
-        prompt_template = ChatPromptTemplate.from_template(template)
+            template = """Você é um assistente que responde com base nas informações abaixo.
+            Contexto:
+            {context}
 
-        formatted_prompt = prompt_template.format_messages(
-            context=context,
-            question=user_message
-        )
+            Pergunta:
+            {question}
 
-        ollama_llm = get_ollama_llm()
-        response = ollama_llm.invoke(formatted_prompt)
+            Resposta:
+            """
 
-        return response
+            prompt_template = ChatPromptTemplate.from_template(template)
+            formatted_prompt = prompt_template.format_messages(
+                context=context,
+                question=user_message
+            )
+
+            llm = get_ollama_llm()
+            response = llm.invoke(formatted_prompt)
+
+            return str(response.content) if hasattr(response, "content") else str(response)
+
+        except Exception as e:
+            print(f"❌ Erro ao gerar resposta com RAG: {e}")
+            return "Ocorreu um erro ao tentar gerar uma resposta."
+        
+    def update_message_feedback(self, message_id: int, feedback: FeedbackEnum):
+        try:
+            updated = self.repository.update_feedback(self.db, message_id, feedback)
+            if not updated:
+                raise HTTPException(status_code=404, detail="Mensagem não encontrada")
+            return ChatMessageRead.from_orm(updated)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))

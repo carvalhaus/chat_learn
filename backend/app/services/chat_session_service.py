@@ -2,10 +2,10 @@ from typing import List, Optional
 from app.database.session import SessionLocal
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from app.models.chat_session_model import ChatSession
 from app.repositories.chat_session_repository import ChatSessionRepository
 from app.repositories.external_user_repository import ExternalUserRepository
-from app.schemas.chat_session_schema import ChatSessionCreate, ChatSessionRead
+from app.schemas.chat_session_schema import ChatSessionCreate, ChatSessionRead,ChatSessionWithUserResponse
+from app.schemas.external_user_schema import ExternalUserRead
 
 class ChatSessionService:
     def __init__(self):
@@ -13,8 +13,7 @@ class ChatSessionService:
         self.repository = ChatSessionRepository()
         self.external_user_repo = ExternalUserRepository()
 
-    def create_session(self, session_create: ChatSessionCreate) -> ChatSessionRead:
-        client_id = 1
+    def create_session(self, session_create: ChatSessionCreate, client_id: int) -> ChatSessionRead:
         try:
             external_user = self.external_user_repo.get_by_client_and_external_id(
                 db=self.db,
@@ -34,7 +33,10 @@ class ChatSessionService:
                 "external_user_id": external_user.id
             })
 
-            return ChatSessionRead.from_orm(session)
+            return ChatSessionWithUserResponse(
+                session=ChatSessionRead.from_orm(session),
+                external_user=ExternalUserRead.from_orm(external_user)
+            )
 
         except Exception as e:
             raise HTTPException(

@@ -19,4 +19,8 @@ class ChatSessionRead(BaseModel):
     messages: List["ChatMessageRead"] = []
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+class ChatSessionWithUserResponse(BaseModel):
+    session: ChatSessionRead
+    external_user: ExternalUserRead

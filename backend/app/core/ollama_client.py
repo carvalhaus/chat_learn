@@ -1,14 +1,13 @@
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaEmbeddings
+from langchain_ollama.llms import OllamaLLM
 from app.core.config import settings
 
 
 def get_ollama_embeddings():
     return OllamaEmbeddings(model="llama3.2", base_url=settings.OLLAMA_URL)
 
-
 def get_ollama_llm():
-    return Ollama(model="llama3.2", base_url=settings.OLLAMA_URL, temperature=0.1)
+    return OllamaLLM(model="llama3.2", base_url=settings.OLLAMA_URL, temperature=0.1)
 
 def check_ollama_connection():
     import requests

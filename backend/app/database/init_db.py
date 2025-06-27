@@ -23,7 +23,7 @@ def load_vectorstore():
     try:
         vector_store = ChatVectorStore()
         print("🚀 Iniciando carregamento do Vectorstore Redis...")
-        vector_store.build_vectorstore_from_questions_db(db)
+        vector_store.build_vectorstore_from_questions(db)
         print("✅ Vectorstore Redis carregado com sucesso!")
     except Exception as e:
         print(f"❌ Erro ao carregar Vectorstore: {e}")

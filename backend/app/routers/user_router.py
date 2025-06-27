@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends
 from typing import List
 from app.schemas.user_schema import UserRead, UserCreate, UserUpdate
 from app.controllers.user_controller import UserController
